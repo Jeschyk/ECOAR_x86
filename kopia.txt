@@ -1,0 +1,52 @@
+	mov		edi, edx						;edi - dy
+	shl		edi, 1							;edi = 2 * dy = bi
+	
+	sub		edx, eax
+	shl		edx, 1							;ai = edx = (dy - dx) * 2
+	mov		[ebp - 4], edx					;[ebp - 4] = ai
+	
+	sub		eax, edi
+	neg		eax								;d = eax
+	
+	mov		edx, [esi + 12]					;edx = cx
+	mov		ebx, [esi + 16]					;ebx = cy
+	
+compare_while_cx_neq_x:
+	cmp		edx, [ebp + 12]					;cx != x
+	je		end
+	
+	add		edx, [ebp - 12]					;cx += xi
+	
+	cmp		eax, 0
+	jl		d_less_0_horizontal
+	
+;d_greater_eq_0:
+	add		ebx, ecx						;cy += yi
+	add		eax, [ebp - 4]					;d += ai
+	
+	pushRegisters
+	
+	push	ebx								;wrzucamy cy
+	push	edx								;wrzucamy cx
+	push	esi
+	
+	call	SetPixel
+	add		esp, 12
+	popRegisters
+	
+	jmp		compare_while_cx_neq_x
+	
+d_less_0_horizontal:	
+	
+	
+	add		eax, edi
+	
+	pushRegisters
+	push	ebx								;wrzucamy cy
+	push	edx								;wrzucamy cx
+	push	esi
+	call	SetPixel
+	add		esp, 12
+	popRegisters
+	
+	jmp		compare_while_cx_neq_x
